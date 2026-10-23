@@ -1,0 +1,71 @@
+{
+  "name": "dsh-preview-media",
+  "version": "0.1.4",
+  "description": "Video and audio preview for DeepSeek Harness: play mp4/mov/mkv/webm and mp3/flac/wav in the right-Sidebar document preview, streamed over an authenticated HTTP Range route (plus a loopback origin so the desktop app can seek) without loading the whole file.",
+  "type": "module",
+  "license": "MIT",
+  "author": "439436269-ctrl",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "video",
+    "audio",
+    "preview",
+    "media"
+  ],
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/**/*.js",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+        "@deepseek-ai/dsh-client-ui-sidebar-right",
+        "@deepseek-ai/dsh-api-workspace-files",
+        "@deepseek-ai/dsh-client-resources"
+      ]
+    },
+    "compatibility": {
+      "dshReleases": {
+        "0.2.0-rc.2": "compatible"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/439436269-ctrl/dsh-preview-media.git"
+  },
+  "homepage": "https://github.com/439436269-ctrl/dsh-preview-media#readme",
+  "bugs": {
+    "url": "https://github.com/439436269-ctrl/dsh-preview-media/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+*.tgz
+scripts/shots/
+scripts/fixtures/
+
+docs/0*.png
+docs/*.txt
+docs/buttons.json
+
+docs/portfolio-card.png
+
+docs/portfolio-collection.png
