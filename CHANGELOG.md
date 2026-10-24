@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 — 2026-10-24
+
+- When the desktop loopback origin reports `MEDIA_ERR_SRC_NOT_SUPPORTED` (code 4), retry the authenticated route once even if metadata already arrived. The loopback is the desktop-only transport; a code-4 failure there is not proof that the file's codec is unsupported. The retry may lose loopback seeking, but it prioritizes playback and avoids a misleading "codec unsupported" message when the authenticated route can play the file.
+
 ## 0.1.4 — 2026-10-21
 
 Diagnostics for playback problems, and a stricter fallback.
