@@ -85,7 +85,7 @@ test("formatSpeed labels the button", async () => {
   assert.equal(formatSpeed(0.75), "0.75×");
 });
 
-test("apply registers two renderers, two bodies, and one dictionary", async () => {
+test("apply registers three renderers, three bodies, and one dictionary", async () => {
   const { apply } = await loadBundle();
   globalThis.__DSH_PREVIEW_MEDIA_CONFIG__ = { routePath: "/api/custom-media" };
   const renderers = [];
@@ -129,22 +129,30 @@ test("apply registers two renderers, two bodies, and one dictionary", async () =
   assert.equal(typeof dictionaries[0].value.zh.video, "string");
   assert.equal(typeof dictionaries[0].value.en.video, "string");
 
-  assert.equal(renderers.length, 2);
-  const [video, audio] = renderers;
+  assert.equal(renderers.length, 3);
+  const [video, sourceVideo, audio] = renderers;
   assert.equal(video.id, "dsh-preview-media/video");
   assert.ok(video.extensions.includes("mp4"));
   assert.equal(video.priority, "extension");
   assert.equal(video.loading, "renderer");
   assert.equal(video.wrap, false);
   assert.deepEqual(video.binaryExtensions, video.extensions);
+  assert.ok(!video.extensions.includes("ts") && !video.extensions.includes("mts"));
+  assert.ok(video.extensions.includes("m2ts"));
+  // TypeScript suffixes: below the built-in code preview, and not declared binary.
+  assert.equal(sourceVideo.id, "dsh-preview-media/video-source");
+  assert.deepEqual(sourceVideo.extensions, ["ts", "mts"]);
+  assert.equal(sourceVideo.priority, "builtin");
+  assert.equal(sourceVideo.binaryExtensions, undefined);
+  assert.equal(sourceVideo.loading, "renderer");
   assert.equal(audio.id, "dsh-preview-media/audio");
   assert.ok(audio.extensions.includes("mp3"));
   assert.ok(!audio.extensions.includes("mp4"));
 
-  assert.equal(slots.length, 2);
+  assert.equal(slots.length, 3);
   assert.deepEqual(
     slots.map((slot) => slot.key),
-    ["dsh-preview-media/video", "dsh-preview-media/audio"]
+    ["dsh-preview-media/video", "dsh-preview-media/video-source", "dsh-preview-media/audio"]
   );
   for (const slot of slots) {
     assert.equal(slot.name, "sidebar.right.tab.document");
