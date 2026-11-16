@@ -23,7 +23,7 @@ To check it loaded, open any `.mp4` from the Files tab: the preview pane shows t
 
 ## What it does
 
-- **Renderer** — registers two document-previews implementations, `dsh-preview-media/video` (video suffixes) and `dsh-preview-media/audio` (audio suffixes), with priority `extension`, `loading: 'renderer'`, and their suffixes declared binary so the “plain text” fallback is not offered.
+- **Renderer** — registers two document-previews implementations, `dsh-preview-media/video` (video suffixes) and `dsh-preview-media/audio` (audio suffixes), with priority `extension`, `loading: 'renderer'`, and their suffixes declared binary (except `ts` and `mts`, see below) so the “plain text” fallback is not offered.
 - **Player** — a native `<video>`/`<audio>` element with the browser's own controls. The video is fitted into the pane with `object-fit: contain` inside a flexible frame, so a portrait or landscape clip is fully visible at once, with black letterboxing instead of spilling past the preview edge. Below it sit **倍速 / Speed** (cycles 1× → 1.25× → 1.5× → 1.75× → 2× → 0.5× → 0.75×), **循环 / Loop**, and — for video — **全屏 / Full screen** and **画中画 / Picture in picture**. Speed and loop also apply to audio, and the choice is remembered per browser. Audio shows a card with the file name, its size and the player. The body reports `loaded` / `failed` back to the document preview owner so the tab's loading state settles.
 - **Stream** — a Host route `GET|HEAD /api/preview/media?path=<absolute path>` that answers `200` with `Accept-Ranges: bytes`, `206` with `Content-Range` for one byte window, `416` with `Content-Range: bytes */size` for an unsatisfiable window, and `HEAD` with headers only. It reads the file a chunk at a time (`chunkBytes`, 1 MiB by default) through `ctx.fs.readByteRange`, so memory stays flat.
 - **Desktop seeking** — the desktop app serves the page from `dsh-app://app` and proxies every request through `protocol.handle`. Chromium's media stack cannot seek a response produced by a custom-protocol handler (`video.seekable` collapses to `[0, 0]`), so in the desktop shell the player would play but a dragged timeline would snap back to the start. The Host therefore also listens on an ephemeral `127.0.0.1` port and hands the browser half a capability token (`GET /api/preview/media?discover=1`); in the shell the player streams from that loopback origin, where normal HTTP `Range` makes seeking work. In a plain browser the authenticated route is used as before.
@@ -43,6 +43,8 @@ Settings live on the `preview-media` entry (Settings → Plugins, or the profile
 | `chunkBytes` | `1048576` | Bytes per ranged read. |
 | `videoExtensions` | `mp4, m4v, mov, webm, ogv, ogg, mkv, avi, wmv, flv, 3gp, ts, m2ts, mts` | Suffixes the video player claims. |
 | `audioExtensions` | `mp3, wav, flac, m4a, aac, oga, opus, weba, wma, aiff, aif` | Suffixes the audio player claims. |
+
+`ts` and `mts` are also TypeScript suffixes. They are registered as a separate renderer at the registry's `builtin` priority, so the code preview stays the default for them and **Video** is chosen from the viewer menu for an MPEG transport stream.
 
 The browser half mirrors the suffix lists in `lib/client.js`; keep them in sync when changing either side. The route path is published to the page as `__DSH_PREVIEW_MEDIA_CONFIG__` by the Host, so a configured path and the player's URL never drift apart.
 

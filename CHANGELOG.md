@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `.ts` and `.mts` are TypeScript far more often than MPEG transport streams, and a renderer registered as `extension` outranks the built-in code preview, so every TypeScript file opened as an empty video player. These two suffixes are now registered as a separate `builtin`-priority renderer: the registry ties it with the code preview and the code preview wins on registration order, so source opens as code and **Video** is one choice away in the viewer menu. `m2ts` and the other video suffixes keep the `extension` priority. The two suffixes are no longer declared binary.
+
 ## 0.1.5 — 2026-10-24
 
 - When the desktop loopback origin reports `MEDIA_ERR_SRC_NOT_SUPPORTED` (code 4), retry the authenticated route once even if metadata already arrived. The loopback is the desktop-only transport; a code-4 failure there is not proof that the file's codec is unsupported. The retry may lose loopback seeking, but it prioritizes playback and avoids a misleading "codec unsupported" message when the authenticated route can play the file.
